@@ -21,12 +21,9 @@ SCREEN_HEIGHT = 600
 # Define a player object by extending pygame.sprite.Sprite
 # The surface drawn on the screen is now an attribute of 'player'
         
-def onClick(btn, person):
+def onClick(btn, person=None):
 
-    btn.alreadyPressed = True
-    btn.buttonSurface.fill(btn.fillColors['pressed'])
-    print(btn.buttonSurface.get_colorkey(), "ln55")
-    print(btn, "clicked")
+    btn.press()
     # call elevator function
     # add_elevator_queue()
 
@@ -39,8 +36,15 @@ font = pygame.font.SysFont('Arial', 40)
 # The size is determined by the constant SCREEN_WIDTH and SCREEN_HEIGHT
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
+BACKGROUND = pygame.image.load('icons/bg.jpg')
+BACKGROUND = pygame.transform.scale(BACKGROUND,(SCREEN_WIDTH, SCREEN_HEIGHT))
+
 # Fill the screen with black
-screen.fill((0, 0, 0))
+screen.blit(BACKGROUND,(0,0))
+
+fps = 400
+fpsClock = pygame.time.Clock()
+
 
 buttons = []
 
@@ -51,17 +55,16 @@ buttons.append(btn0)
 buttons.append(btn1)
 
 IMAGE = pygame.image.load(os.path.join('icons', 'çöp_adam.png')).convert_alpha()
+IMAGE = pygame.transform.scale(IMAGE,(SCREEN_WIDTH/5, SCREEN_HEIGHT/5))
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, pos, image):
         super(Player, self).__init__()
         self.image = image
         self.rect = self.image.get_rect(center=pos)
-
         self.person = Person(0, 1, type=0)
         btn = buttons[0]
-        print(btn)
-        btn.onclickFunction(btn, self.person)
+        btn.onclickFunction(btn, person=self.person)
 
 def generate_people():
     # randomly select a person. 
@@ -72,9 +75,11 @@ def generate_people():
 # Variable to keep the main loop running
 running = True
 
+for btn in buttons:
+    btn.process()
+
 # Main loop
 while running:
-
     # for loop through the event queue
     for event in pygame.event.get():
         # Check for KEYDOWN event
@@ -87,11 +92,14 @@ while running:
             running = False
 
     # Random people generator.
-    generate_people()
     # In this function randomly generated people are created players, who presses buttons. 
 
     # Update the display
     pygame.display.flip()   
+    
+    generate_people()
+
+    fpsClock.tick(fps)
 
 # ISSUE 1:
 # 1.b) Buttons are not clicked visually. 

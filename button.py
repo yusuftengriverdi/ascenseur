@@ -4,13 +4,12 @@ import pygame
 class Button:
     """Create a button, then blit the surface in the while loop"""
  
-    def __init__(self, pos, floor, in_or_out, font, screen, onclickFunction=None, onePress=False):
+    def __init__(self, pos, floor, in_or_out, font, screen, onclickFunction=None):
         self.x, self.y = pos
 
         self.onclickFunction = onclickFunction
         # Pressed or not.
-        self.onePress = onePress
-        self.alreadyPressed = False
+        self.pressed = False
 
         self.floor = floor
 
@@ -30,15 +29,37 @@ class Button:
         self.buttonRect = pygame.Rect(self.x, self.y, self.width, self.height)
 
         self.buttonSurf = font.render(str(floor), True, (20, 20, 20))
+        self.screen = screen
+
+    def __str__(self) -> str:
+        return f"id, {self.floor}" 
+
+    def process(self):
+        self.buttonSurface.fill(self.fillColors['normal'])
+        
+        self.buttonSurface.blit(self.buttonSurf, [
+            self.buttonRect.width/2 - self.buttonSurf.get_rect().width/2,
+            self.buttonRect.height/2 - self.buttonSurf.get_rect().height/2
+        ])
+        self.screen.blit(self.buttonSurface, self.buttonRect)
+
+
+    def press(self):
+        self.pressed = True
+        self.buttonSurface.fill(self.fillColors['pressed'])
+                
+        self.buttonSurface.blit(self.buttonSurf, [
+            self.buttonRect.width/2 - self.buttonSurf.get_rect().width/2,
+            self.buttonRect.height/2 - self.buttonSurf.get_rect().height/2
+        ])
+        self.screen.blit(self.buttonSurface, self.buttonRect)
+
+    def unpress(self):
+        self.pressed = False
+        self.buttonSurface.fill(self.fillColors['normal'])
 
         self.buttonSurface.blit(self.buttonSurf, [
             self.buttonRect.width/2 - self.buttonSurf.get_rect().width/2,
             self.buttonRect.height/2 - self.buttonSurf.get_rect().height/2
         ])
-        
-        screen.blit(self.buttonSurface, self.buttonRect)
-        pygame.Surface.fill(self.buttonSurface, (225, 225, 0))
-
-    def __str__(self) -> str:
-        return f"id, {self.floor}" 
-
+        self.screen.blit(self.buttonSurface, self.buttonRect)
