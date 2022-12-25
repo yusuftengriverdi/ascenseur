@@ -54,8 +54,28 @@ btn1 = Button((30, 75), 1, True, font, screen, onClick)
 buttons.append(btn0)
 buttons.append(btn1)
 
+def scale(img, size=0.2):
+    ext = IMAGE.get_rect()[2:4]
+    size = 0.1
+
+    return pygame.transform.scale(
+        IMAGE,
+        (int(ext[0]*size), int(ext[1]*size))
+    )
+
 IMAGE = pygame.image.load(os.path.join('icons', 'çöp_adam.png')).convert_alpha()
-IMAGE = pygame.transform.scale(IMAGE,(SCREEN_WIDTH/5, SCREEN_HEIGHT/5))
+IMAGE = scale(IMAGE, size=0.2)
+
+LIFT = pygame.image.load(os.path.join('icons', 'asansör.png')).convert_alpha()
+LIFT = scale(LIFT, size=1)
+
+class Lift():
+    def __init__(self, pos, image=LIFT):
+        self.image = image
+        self.rect = self.image.get_rect(center=pos)
+
+elevatorSurf = Lift(pos=(50, 75))
+print(elevatorSurf)
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, pos, image):
@@ -77,6 +97,8 @@ running = True
 
 for btn in buttons:
     btn.process()
+
+screen.blit(elevatorSurf.image, elevatorSurf.rect)
 
 # Main loop
 while running:
@@ -101,8 +123,7 @@ while running:
 
     fpsClock.tick(fps)
 
-# ISSUE 1:
-# 1.b) Buttons are not clicked visually. 
+
 # ISSUE 2:
 # 2.a) Player should move.
 # 2.b) Select randomly from available options.
